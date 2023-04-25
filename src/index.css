@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+@tailwind layers;
+
+@layer components {
+  .siteTitle {
+    @apply text-3xl font-bold;
+  }
+}
