@@ -1,19 +1,13 @@
+import { Authentication } from "./features/authorization/Authorization";
+
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p className="siteTitle">
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="w-[1450px] max-w-[90%] my-0 mx-auto">
+      <div className="bg-white w-lg max-w-lg border-solid border-4 border-black rounded-md p-4 m-10">
+        <h1 className="text-4xl leading-tight font-extrabold font-accent md:text-6xl leading-snug">CrossFader</h1>
+        <p className="text-sm md:text-base leading-tight">Seamlessly blend your favourite artists into a single playlist</p>
+      </div>
+      <Authentication />
     </div>
   );
 }

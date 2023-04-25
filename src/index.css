@@ -4,8 +4,16 @@
 @tailwind variants;
 @tailwind layers;
 
-@layer components {
-  .siteTitle {
-    @apply text-3xl font-bold;
+
+
+
+/* @layer components {
+  .wrapper {
+    @apply w-[1450px] max-w-[90%] mg-0-auto;
   }
+} */
+
+
+html {
+  background:url('./assets/layered-waves.svg') top / cover no-repeat fixed;
 }
