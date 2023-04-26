@@ -18,7 +18,11 @@
     }
 
     .queryContainer {
-      @apply max-w-2xl py-4;
+      @apply max-w-xl py-4 flex-[2_1_auto];
+    }
+
+    .getRecs {
+      @apply bg-orange px-8 py-4 rounded-xl text-white font-bold border-solid border-4 border-black
     }
 }
 

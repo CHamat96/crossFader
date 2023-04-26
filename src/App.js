@@ -1,9 +1,7 @@
 import { Authentication } from "./features/authorization/Authorization";
 import { loggedIn } from "./features/authorization/authorizationSlice";
 import { useSelector } from "react-redux";
-import { ArtistSearch } from "./features/search/ArtistSearch";
-import { AlbumSearch } from "./features/search/AlbumSearch";
-import TopArtists from "./features/search/TopArtists";
+import { UserInput } from "./features/search/UserInput";
 function App() {
   const isLoggedIn = useSelector(loggedIn)
   return (
@@ -15,9 +13,7 @@ function App() {
       <Authentication />
       {isLoggedIn &&
       <>
-      <AlbumSearch />
-      <ArtistSearch />
-      <TopArtists />
+        <UserInput />
       </>
       }
     </div>

@@ -14,6 +14,7 @@ import {
   fetchTopTracks
  } from './artistSearchSlice'
 
+ import { revertRecs } from "../playlist/playlistSlice";
  import { accessToken } from "../authorization/authorizationSlice";
  import { TbVinyl } from 'react-icons/tb'
  import { CiCircleRemove } from 'react-icons/ci'
@@ -67,6 +68,7 @@ import {
     const isChecked = document.querySelector(`input[value="${artist.id}"]`)
     dispatch(setRemoveArtist(artist))
     dispatch(setRemoveTracks(artist.id))
+    dispatch(revertRecs())
     if(isChecked){
       isChecked.checked = false
     }
@@ -74,7 +76,7 @@ import {
 
   return (
           <div className="queryContainer">
-            <label htmlFor="artistSearch" className="relative w-full">
+            <label htmlFor="artistSearch" className="relative w-4/5">
               <p>Search for a band/artist</p>
               <input 
               type="text" 

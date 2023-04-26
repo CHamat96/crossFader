@@ -61,7 +61,7 @@ import {
 
   return (
           <div className="queryContainer">
-            <label htmlFor="albumSearch" className="relative w-full">
+            <label htmlFor="albumSearch" className="relative w-4/5">
               <p>Search for an album (optional)</p>
               <input 
               type="text" 

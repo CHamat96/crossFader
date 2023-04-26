@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchTopTracks, setRemoveArtist, setRemoveTracks, setSelectedArtists, allSelectedArtists } from "./artistSearchSlice";
 import { TbVinyl } from "react-icons/tb";
 
-export default function TopArtists(){
+export function TopArtists(){
   const dispatch = useDispatch()
   const topArtists = useSelector(selectTopArtists)
   const token = useSelector(accessToken)
@@ -16,8 +16,6 @@ export default function TopArtists(){
     if(checked && artists.length < 4){
       dispatch(setSelectedArtists(artist))
       dispatch(fetchTopTracks({ token: token, artistID: artist.id }))
-    } else if (artists.length >= 4){
-      alert(`Can only choose up to 4 artists`)
     } else {
       dispatch(setRemoveArtist(artist))
       dispatch(setRemoveTracks(artist.id))
@@ -40,7 +38,7 @@ export default function TopArtists(){
               className="topArtistsCheck"
               onChange={(e) => handleArtistCheckbox(e, artist)}/>
               {artist.images[2] ? <img src={artist.images[2].url} alt={artist.name} className={`w-[75px] h-[75px]`} /> : <TbVinyl />}
-              <p className={`peer-checked/artistCheck-${index}:font-bold`}>{artist.name}</p>
+              <p>{artist.name}</p>
             </label>
           )
         })}
