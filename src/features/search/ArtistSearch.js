@@ -38,10 +38,10 @@ import {
 
   function handleArtistQuery(e){
     const value = e.target.value
-    if(value.length > 0){
+    if(value.length >= 1){
       dispatch(setArtistQuery(value))
       dispatch(fetchArtists({token: token, query: artistQuery}))
-    } else if (value.length === 0){
+    } else if (value.length < 1){
       handleArtistClear()
     }
   }

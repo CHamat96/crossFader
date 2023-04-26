@@ -4,6 +4,7 @@ import { selectTopArtists } from "../user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTopTracks, setRemoveArtist, setRemoveTracks, setSelectedArtists, allSelectedArtists } from "./artistSearchSlice";
 import { TbVinyl } from "react-icons/tb";
+import { revertRecs } from "../playlist/playlistSlice";
 
 export function TopArtists(){
   const dispatch = useDispatch()
@@ -19,6 +20,7 @@ export function TopArtists(){
     } else {
       dispatch(setRemoveArtist(artist))
       dispatch(setRemoveTracks(artist.id))
+      dispatch(revertRecs())
     }
   }
 
@@ -28,7 +30,7 @@ export function TopArtists(){
       <div className="my-0 mx-auto flex items-center flex-wrap gap-2">
       {topArtists.map((artist, index) => {
           return(
-            <label key={`${artist.id}-${index}`} htmlFor={`option-${index}`} className="flex flex-[2 1 80%] flex-col gap-2 items-center checked:font-bold">
+            <label key={`${artist.id}-${index}`} htmlFor={`option-${index}`} className="flex flex-[1_1_auto] flex-col gap-1 items-center">
               <input 
               type="checkbox" 
               name="topArtistSelection" 

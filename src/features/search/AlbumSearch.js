@@ -35,10 +35,10 @@ import {
 
   function handleArtistQuery(e){
     const value = e.target.value
-    if(value.length > 0){
+    if(value.length >= 1){
       dispatch(setAlbumQuery(value))
       dispatch(fetchAlbums({token: token, query: albumQuery}))
-    } else if (value.length === 0){
+    } else if (value.length < 1){
       handleAlbumQueryClear()
     }
   }
@@ -89,8 +89,7 @@ import {
               }
             </label>
             {albumSelected && 
-            
-              <div className="artistSelection">
+              <div className="albumSelection">
                 <h3>Your Selected Album:</h3>
                 <div className="flex flex-wrap gap-2">
                       <div key={`${album.id}`}>
@@ -109,6 +108,6 @@ import {
                 </div>
               </div>
             }
-          </div>
+    </div>
   )
  }

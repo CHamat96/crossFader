@@ -21,8 +21,12 @@
       @apply max-w-xl py-4 flex-[2_1_auto];
     }
 
-    .getRecs {
-      @apply bg-orange px-8 py-4 rounded-xl text-white font-bold border-solid border-4 border-black
+    .button {
+      @apply bg-orange px-8 py-4 rounded-xl text-white font-bold border-solid border-4 border-black mt-8 mx-auto block hover:bg-[#F29875]
+    }
+
+    legend {
+      @apply text-xl text-center my-2 font-[500]
     }
 }
 

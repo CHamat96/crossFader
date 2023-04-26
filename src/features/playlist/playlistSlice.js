@@ -11,17 +11,18 @@ let tempArray = []
 export const fetchRecs = createAsyncThunk(`playlist/fetchRecs`, async({ token, track, artists, album }) => {
   tempArray = []
   const seed_artists = artists.map(artist => artist.id).join(',')
+
     // if a specified album is selected, adjust the "track" element to include important properties from the "album" object
-  if(album) {
-    track = {
-      ...track,
-      album: {
-        name: album.name,
-        images: album.images,
-      },
-      artists: album.artists,
-    }
-  }
+    if(album){
+        track = {
+          ...track,
+          album: {
+            name: album.name,
+            images: album.images,
+          },
+          artists: album.artists,
+        }
+      }
   const url = new URL(`https://api.spotify.com/v1/recommendations`)
   url.search = new URLSearchParams({
     limit:100,

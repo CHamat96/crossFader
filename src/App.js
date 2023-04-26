@@ -3,6 +3,7 @@ import { loggedIn } from "./features/authorization/authorizationSlice";
 import { useSelector } from "react-redux";
 import { UserInput } from "./features/search/UserInput";
 function App() {
+
   const isLoggedIn = useSelector(loggedIn)
   return (
     <div className="w-[1450px] max-w-[90%] my-0 mx-auto">
@@ -12,9 +13,7 @@ function App() {
       </div>
       <Authentication />
       {isLoggedIn &&
-      <>
-        <UserInput />
-      </>
+       <UserInput />
       }
     </div>
   );
