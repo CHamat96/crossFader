@@ -7,13 +7,32 @@
 
 
 
-/* @layer components {
-  .wrapper {
-    @apply w-[1450px] max-w-[90%] mg-0-auto;
-  }
-} */
+@layer components {
+
+
+    .resultsList {
+      @apply max-w-full bg-[#ffffff] absolute max-h-64 z-50 overflow-y-auto border-2 border-solid border-black;
+    }
+    .resultContainer {
+      @apply w-full inline-flex gap-2 items-center border-b-2 py-2
+    }
+
+    .queryContainer {
+      @apply max-w-2xl py-4;
+    }
+}
 
 
 html {
   background:url('./assets/layered-waves.svg') top / cover no-repeat fixed;
+}
+
+.topArtistsCheck {
+  display:none;
+}
+.topArtistsCheck:checked ~ img {
+  border: solid 4px #EB5E28;
+}
+.topArtistsCheck:checked ~ p {
+  font-weight:600;
 }
