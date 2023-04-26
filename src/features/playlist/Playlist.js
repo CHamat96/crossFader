@@ -1,5 +1,6 @@
-import { Fragment, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { selectAllRecs, revertRecs, isPlaylistLoading } from "./playlistSlice";
+import ReactAudioPlayer from "react-audio-player";
 import { useSelector, useDispatch } from "react-redux";
 import { Dialog, Transition } from "@headlessui/react";
 import { CiCircleRemove } from 'react-icons/ci'
@@ -9,7 +10,11 @@ import { accessToken } from "../authorization/authorizationSlice";
 import { allSelectedArtists, areArtistsSelected } from "../search/artistSearchSlice";
 import { isAlbumSelected, selectedAlbum } from "../search/albumSearchSlice";
 export function PlaylistDisplay(){
+
+  const previewRef = useRef()
+
   const [open, setOpen] = useState(true)
+
   const playlistLoading = useSelector(isPlaylistLoading)
   const allRecs = useSelector(selectAllRecs)
   const userID = useSelector(selectUserID)
@@ -67,6 +72,11 @@ export function PlaylistDisplay(){
 
     window.open(playlist.uri, "_blank")
   }
+
+  function handlePreviewPlay(){
+    previewRef.current.play()
+  }
+
   return (
     <>
     {playlistLoading === false && <button className="button" onClick={() => setOpen(!open)}>{open ? "Close" : 'Open'}  Playlist</button>}
@@ -132,7 +142,18 @@ export function PlaylistDisplay(){
                         <div>
                         <p>{song.name}</p>
                         <p><span className="artist">{song.artists[0].name}</span> - <span className="album">{song.album.name}</span></p>
-                        {song.preview_url && <p>Has Preview</p>}
+                        {song.preview_url && 
+                        <div className="songPreview"
+                        onMouseOver={handlePreviewPlay}
+                        onMouseOut={() => previewRef.current.pause()}>
+                          Play Preview
+                          <ReactAudioPlayer
+                            ref={previewRef}
+                            src={song.preview_url}
+                           />
+                        </div>
+                        }
+                        {/* {song.preview_url && <p>Has Preview</p>} */}
                         </div>
                       </div>
                     )
