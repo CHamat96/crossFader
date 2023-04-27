@@ -6,7 +6,7 @@ import { TopArtists } from './TopArtists'
 import { allSelectedArtists, areArtistsSelected, selectTopTracks } from './artistSearchSlice'
 import { isAlbumSelected, selectedAlbum } from './albumSearchSlice'
 import { accessToken } from '../authorization/authorizationSlice'
-import { fetchRecs, selectAllRecs, revertRecs, isPlaylistLoading } from '../playlist/playlistSlice'
+import { fetchRecs, selectAllRecs, revertRecs, isPlaylistLoading, togglePlaylistOpen } from '../playlist/playlistSlice'
 import { PlaylistDisplay } from '../playlist/Playlist'
 
 
@@ -34,6 +34,7 @@ export function UserInput(){
     albumTracks.forEach(track => {
       dispatch(fetchRecs({ token: token, track: track, artists: artists, album: album }))
     })
+    dispatch(togglePlaylistOpen(true))
   }
 
   function handleGetArtistRecs(e){
@@ -42,6 +43,7 @@ export function UserInput(){
     topTracks.forEach(track => {
       dispatch(fetchRecs({ token: token, track: track, artists: artists }))
     })
+    dispatch(togglePlaylistOpen(true))
   }
   return (
     <div className="bg-[#fff] p-8 flex-auto border-2 border-black rounded-2xl max-h-content max-w-3/5 shadow-sm shadow-slate-600">
@@ -54,18 +56,24 @@ export function UserInput(){
     </fieldset>
     <fieldset></fieldset>
     <TopArtists />
-    {
-      albumReady && artistsReady ?
+    {albumReady && artistsReady ?
       (
-          <button
-          onClick={handleGetAlbumRecs}
-          className="button">Generate the Playlist!</button>
+        <>
+        <button
+        onClick={handleGetAlbumRecs}
+        className="button">Generate the Playlist!</button>
+        {playlistLoading !== null &&
+          <PlaylistDisplay
+          refreshTracks={handleGetAlbumRecs}/> }
+        </>
       ) : artistsReady && artists.length > 1 ? (
+        <>
         <button className="button" onClick={handleGetArtistRecs}>Generate the Playlist!</button>
+        {playlistLoading !== null &&
+          <PlaylistDisplay
+          refreshTracks={handleGetArtistRecs}/> }
+        </>
       ) : ""
-    }
-    {playlistLoading === false && 
-      <PlaylistDisplay />
     }
     </div>
   )

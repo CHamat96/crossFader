@@ -15,10 +15,14 @@ const authorizationSlice = createSlice({
     setAccessToken: (state, action) => {
       state.token = action.payload
     },
+    revertAuth: (state) => {
+      state.token = initialState.token
+      state.isLoggedIn = initialState.isLoggedIn
+    }
   }
 })
 
-export const { setIsLoggedIn, setAccessToken } = authorizationSlice.actions;
+export const { setIsLoggedIn, setAccessToken, revertAuth } = authorizationSlice.actions;
 
 
 export const accessToken = ({ authorization }) => authorization.token

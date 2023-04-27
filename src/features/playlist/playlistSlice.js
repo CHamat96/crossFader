@@ -3,7 +3,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const initialState = {
   allRecs: [],
   recsLoading: null,
-  recsError: null
+  recsError: null,
+  playlistOpen: false,
 }
 
 let tempArray = []
@@ -13,16 +14,16 @@ export const fetchRecs = createAsyncThunk(`playlist/fetchRecs`, async({ token, t
   const seed_artists = artists.map(artist => artist.id).join(',')
 
     // if a specified album is selected, adjust the "track" element to include important properties from the "album" object
-    if(album){
-        track = {
-          ...track,
-          album: {
-            name: album.name,
-            images: album.images,
-          },
-          artists: album.artists,
-        }
+  if(album){
+      track = {
+        ...track,
+        album: {
+          name: album.name,
+          images: album.images,
+        },
+        artists: album.artists,
       }
+    }
   const url = new URL(`https://api.spotify.com/v1/recommendations`)
   url.search = new URLSearchParams({
     limit:100,
@@ -58,7 +59,10 @@ const playlistSlice = createSlice({
   reducers: {
     revertRecs: (state) => {
       state.allRecs = initialState.allRecs
-      state.playlistLoading = initialState.playlistLoading
+      state.recsLoading = initialState.recsLoading
+    },
+    togglePlaylistOpen: (state, action) => {
+      state.playlistOpen = action.payload
     }
   },
   extraReducers: builder => 
@@ -88,15 +92,16 @@ const playlistSlice = createSlice({
     })
 
     state.allRecs = finalFiltered
-    state.playlistLoading = false
+    state.recsLoading = false
   })
   .addCase(fetchRecs.rejected, (state, action) => {
     state.recsError = action.payload
   })
 })
 
-export const { revertRecs } = playlistSlice.actions
+export const { revertRecs, togglePlaylistOpen } = playlistSlice.actions
 export const selectAllRecs = ({ playlist }) => playlist.allRecs
-export const isPlaylistLoading = ({ playlist }) => playlist.playlistLoading
+export const isPlaylistOpen = ({ playlist }) => playlist.playlistOpen
+export const isPlaylistLoading = ({ playlist }) => playlist.recsLoading
 
 export default playlistSlice.reducer

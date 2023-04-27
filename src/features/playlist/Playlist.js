@@ -1,19 +1,24 @@
 import { Fragment, useRef, useState } from "react";
-import { selectAllRecs, revertRecs, isPlaylistLoading } from "./playlistSlice";
+import { selectAllRecs, isPlaylistLoading, togglePlaylistOpen, isPlaylistOpen } from "./playlistSlice";
 import ReactAudioPlayer from "react-audio-player";
 import { useSelector, useDispatch } from "react-redux";
 import { Dialog, Transition } from "@headlessui/react";
 import { CiCircleRemove } from 'react-icons/ci'
-import { TbVinyl } from "react-icons/tb";
+import { BsExplicit }  from 'react-icons/bs'
 import { selectUserID } from "../user/userSlice";
 import { accessToken } from "../authorization/authorizationSlice";
 import { allSelectedArtists, areArtistsSelected } from "../search/artistSearchSlice";
 import { isAlbumSelected, selectedAlbum } from "../search/albumSearchSlice";
-export function PlaylistDisplay(){
+import { current } from "@reduxjs/toolkit";
+export function PlaylistDisplay({ refreshTracks }){
 
-  const previewRef = useRef()
+  const previewRef = useRef([])
+  const dispatch = useDispatch()
+  // const [open, setOpen] = useState(true)
+  const [previewPlaying, setPreviewPlaying] = useState({})
+  const [currentPreview, setCurrentPreview] = useState(null)
 
-  const [open, setOpen] = useState(true)
+  const playlistOpen = useSelector(isPlaylistOpen)
 
   const playlistLoading = useSelector(isPlaylistLoading)
   const allRecs = useSelector(selectAllRecs)
@@ -73,15 +78,28 @@ export function PlaylistDisplay(){
     window.open(playlist.uri, "_blank")
   }
 
-  function handlePreviewPlay(){
-    previewRef.current.play()
+  function handlePreviewPlay(e, index, previewURL){
+    // const audioPlayer = document.querySelector('.react-audio-player')
+    setCurrentPreview(previewURL)
+    setPreviewPlaying((prevState) => ({
+      ...prevState,
+      [index]: true,
+    }))
   }
 
+  function handlePreviewPause(e, index){
+    setCurrentPreview('')
+    setPreviewPlaying((prevState) => ({
+      ...prevState,
+      [index]: false
+    }))
+  }
+  
   return (
     <>
-    {playlistLoading === false && <button className="button" onClick={() => setOpen(!open)}>{open ? "Close" : 'Open'}  Playlist</button>}
-    <Transition.Root show={open}>
-    <Dialog as="div" className="relative z-10" onClose={setOpen}>
+    <button className="button" onClick={() => dispatch(togglePlaylistOpen(!playlistOpen))}>{playlistOpen ? "Close" : 'Open'}  Playlist</button>
+    <Transition.Root show={playlistOpen}>
+    <Dialog as="div" className="relative z-10" onClose={() => dispatch(togglePlaylistOpen(!playlistOpen))}>
     <Transition.Child
       as={Fragment}
       enter="ease-in-out duration-500"
@@ -94,7 +112,7 @@ export function PlaylistDisplay(){
     </Transition.Child>
     <div className="relative inset-0">
       <div className="absolute inset-0">
-        <div className="overflow-y-scroll fixed inset-y-0 right-0 max-w-full pl-10">
+        <div className="overflow-y-scroll fixed inset-y-0 right-0 max-w- pl-10">
           <Transition.Child
             as={Fragment}
             enter="transform transition ease-in-out duration-500 sm:duration-700"
@@ -105,59 +123,56 @@ export function PlaylistDisplay(){
             leaveTo="translate-x-full"
           >
             <Dialog.Panel className="pointer-events-auto relative w-screen max-w-lg">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-in-out duration-500"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in-out duration-500"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="absolute left-25 top-0 -ml-8 flex pr-2 pt-4 sm:-ml-10 sm:pr-4">
-                <button
-                  type="button"
-                  className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                  onClick={() => setOpen(false)}
-                >
-                  <span>Close panel</span>
-                  <CiCircleRemove />
-                </button>
-              </div>
-            </Transition.Child>
-              <div className="flex overflow-y-scroll h-content flex-col bg-white py-6 shadow-xl">
+              <div className="flex overflow-y-scroll min-h-content flex-col bg-white py-6 shadow-xl">
                 <div className="px-4 sm:px-6">
                   <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
                     <p>{playlistName}</p>
                     <button className="button" onClick={handleCreatePlaylist}>
                       Export to Spotify
                     </button>
+                    <button className="button" onClick={(e) => refreshTracks(e)}>
+                    Reload Tracks
+                    </button>
                   </Dialog.Title>
                 </div>
                 <div className="relative mt-6 flex-1 px-4 sm:px-6 overflow-y-scroll">
-                  {allRecs.map((song, index) => {
+                  {playlistLoading && 
+                  <p>Loading...</p>
+                  }
+                  {allRecs && allRecs.map((song, index) => {
                     return (
-                      <div key={`${song.id}-${index}`} className="resultContainer">
-                        {song.album.images[1] && <img className="w-[150px] h-[150px]" src={song.album.images[1].url} alt={song.album.name} />}
-                        <div>
-                        <p>{song.name}</p>
+                      <div key={`${song.id}-${index}`} className="resultContainer flex-wrap">
+                        {song.album.images[1] && <img className="max-w-[100px] max-h-[100px] flex-none" src={song.album.images[1].url} alt={song.album.name} />}
+                        <div className="flex-1">
+                        <p>{song.explicit && <span className="explicit"><BsExplicit className="inline-block mb-1 text-red-300 font-bold" /></span>} {song.name}</p>
                         <p><span className="artist">{song.artists[0].name}</span> - <span className="album">{song.album.name}</span></p>
+                        <div className="previewContainer">
                         {song.preview_url && 
-                        <div className="songPreview"
-                        onMouseOver={handlePreviewPlay}
-                        onMouseOut={() => previewRef.current.pause()}>
-                          Play Preview
-                          <ReactAudioPlayer
-                            ref={previewRef}
-                            src={song.preview_url}
-                           />
-                        </div>
+                        <button
+                        className="font-bold text-orange"
+                        onMouseOver={(e) => handlePreviewPlay(e, index, song.preview_url)}
+                        onMouseOut={(e) => handlePreviewPause(e, index)}
+                        onFocus={(e) => handlePreviewPlay(e, index, song.preview_url)}
+                        onBlur={(e) => handlePreviewPause(e, index)}
+                        >
+                        {previewPlaying[index]? "Preview Playing" : "Preview Track"}
+                        </button>
                         }
-                        {/* {song.preview_url && <p>Has Preview</p>} */}
+                        <button
+                        className="block text-green font-bold hover:text-[#1FC7AB]"
+                        onClick={()=> window.open(song.uri, '_blank')}>
+                          Listen on Spotify
+                        </button>
                         </div>
+                        </div>
+                        <p className="duration ml-auto mr-4">{`${Math.floor(song.duration_ms / 1000 / 60 << 0).toString()}:${Math.trunc(song.duration_ms / 1000 % 60).toString().padStart(2, '0')}`}</p>
                       </div>
                     )
                   })}
+                  <ReactAudioPlayer
+                  src={currentPreview}
+                  autoPlay
+                  />
                 </div>
               </div>
             </Dialog.Panel>
